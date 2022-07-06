@@ -262,6 +262,81 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-My-New-Post" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2022/07/06/My-New-Post/" class="article-date">
+      <time datetime="2022-07-06T07:34:20.472Z" itemprop="datePublished">2022-07-06</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>最近参与的一个考试网站搭建，里面有要求使用富文本编辑器，同时还要求高亮显示，由于没有经验，还折腾了不少时间，现在把流程梳理出来，以供大家参考，同时当作笔记来复习</p>
+<p>我选用的富文本编辑组件是vue-quill-editor，第一步先在vscode终端中输入</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm vue-quill-editor</span><br></pre></td></tr></table></figure>
+
+<p>接着看项目情况，需要抽离出来做单独的富文本编辑器组件的，就在main.js中引入文件,做全局注册，如果不考虑那么多，那就直接在使用页面引入富文本组件的文件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">Vue</span> <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">VueQuillEditor</span> <span class="keyword">from</span> <span class="string">&#x27;vue-quill-editor&#x27;</span></span><br><span class="line">引入编辑器</span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;quill/dist/quill.core.css&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;quill/dist/quill.snow.css&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;quill/dist/quill.bubble.css&#x27;</span></span><br><span class="line">以上三行是关于富文本编辑器的样式的</span><br><span class="line"><span class="title class_">Vue</span>.<span class="title function_">use</span>(<span class="title class_">VueQuillEditor</span>)</span><br></pre></td></tr></table></figure>
+
+<p>和路由,vuex等插件一样，先使用一下<br>（感兴趣的小伙伴可以查阅一下Vue.use（）做了什么，这边就不展开了）<br> 接着在需要使用富文本编辑器的地方使用一下这项标签</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;quill-editor ref=<span class="string">&quot;myTextEditor&quot;</span> v-model=<span class="string">&quot;content&quot;</span> :options=<span class="string">&quot;editorOption&quot;</span> &gt;</span><br><span class="line">&lt;/quill-editor&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这是效果图</p>
+<p><img src="https://img-blog.csdnimg.cn/7a1476a524e44a37a4ed98198330085a.png" alt="img"></p>
+<p> ref属性与v-model属性就不说了，这边说下:options&#x3D;”editorOption”这个属性</p>
+<p>这个属性控制的就是上面的工具栏，富文本的各项输入功能，这个时候虽然能控制富文本编辑器的显示以及输入，但是在使用代码功能时却无法实现高亮效果，而且在使用富文本组件的页面如果不对editorOption进行任何修改，那这就是最基本各项输入功能，如果想要控制工具栏</p>
+<p>那么需要在data中返回数据：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 富文本编辑器的配置项</span></span><br><span class="line">     <span class="attr">editorOption</span>: &#123;</span><br><span class="line">       <span class="attr">placeholder</span>: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">       <span class="attr">modules</span>: &#123;</span><br><span class="line">         <span class="attr">toolbar</span>: [</span><br><span class="line">           [<span class="string">&#x27;bold&#x27;</span>, <span class="string">&#x27;italic&#x27;</span>, <span class="string">&#x27;underline&#x27;</span>, <span class="string">&#x27;strike&#x27;</span>], <span class="comment">// 加粗 斜体 下划线 删除线 -----[&#x27;bold&#x27;, &#x27;italic&#x27;, &#x27;underline&#x27;, &#x27;strike&#x27;]</span></span><br><span class="line">           [&#123; <span class="attr">color</span>: [] &#125;, &#123; <span class="attr">background</span>: [] &#125;], <span class="comment">// 字体颜色、字体背景颜色-----[&#123; color: [] &#125;, &#123; background: [] &#125;]</span></span><br><span class="line">           [&#123; <span class="attr">align</span>: [] &#125;], <span class="comment">// 对齐方式-----[&#123; align: [] &#125;]</span></span><br><span class="line">           [&#123; <span class="attr">header</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="literal">false</span>] &#125;], <span class="comment">// 标题</span></span><br><span class="line">           [&#123; <span class="attr">direction</span>: <span class="string">&#x27;ltl&#x27;</span> &#125;], <span class="comment">// 文本方向-----[&#123;&#x27;direction&#x27;: &#x27;rtl&#x27;&#125;]</span></span><br><span class="line">           [&#123; <span class="attr">direction</span>: <span class="string">&#x27;rtl&#x27;</span> &#125;], <span class="comment">// 文本方向-----[&#123;&#x27;direction&#x27;: &#x27;rtl&#x27;&#125;]</span></span><br><span class="line">           [&#123; <span class="attr">indent</span>: <span class="string">&#x27;-1&#x27;</span> &#125;, &#123; <span class="attr">indent</span>: <span class="string">&#x27;+1&#x27;</span> &#125;], <span class="comment">// 缩进-----[&#123; indent: &#x27;-1&#x27; &#125;, &#123; indent: &#x27;+1&#x27; &#125;]</span></span><br><span class="line">           [&#123; <span class="attr">list</span>: <span class="string">&#x27;ordered&#x27;</span> &#125;, &#123; <span class="attr">list</span>: <span class="string">&#x27;bullet&#x27;</span> &#125;], <span class="comment">// 有序、无序列表-----[&#123; list: &#x27;ordered&#x27; &#125;, &#123; list: &#x27;bullet&#x27; &#125;]</span></span><br><span class="line">           [&#123; <span class="attr">script</span>: <span class="string">&#x27;sub&#x27;</span> &#125;, &#123; <span class="attr">script</span>: <span class="string">&#x27;super&#x27;</span> &#125;], <span class="comment">// 上标/下标-----[&#123; script: &#x27;sub&#x27; &#125;, &#123; script: &#x27;super&#x27; &#125;]</span></span><br><span class="line">           [<span class="string">&#x27;blockquote&#x27;</span>, <span class="string">&#x27;code-block&#x27;</span>], <span class="comment">// 引用  代码块-----[&#x27;blockquote&#x27;, &#x27;code-block&#x27;]</span></span><br><span class="line">           [<span class="string">&#x27;clean&#x27;</span>], <span class="comment">// 清除文本格式-----[&#x27;clean&#x27;]</span></span><br><span class="line">           [<span class="string">&#x27;link&#x27;</span>, <span class="string">&#x27;image&#x27;</span>, <span class="string">&#x27;video&#x27;</span>] <span class="comment">// 链接、图片、视频-----[&#x27;link&#x27;, &#x27;image&#x27;, &#x27;video&#x27;]</span></span><br><span class="line">         ],</span><br><span class="line">         <span class="comment">// 语法高亮</span></span><br><span class="line">         <span class="attr">syntax</span>: &#123;</span><br><span class="line">           <span class="attr">highlight</span>: <span class="function"><span class="params">text</span> =&gt;</span> hljs.<span class="title function_">highlightAuto</span>(text).<span class="property">value</span></span><br><span class="line">         &#125;</span><br><span class="line">       &#125;</span><br><span class="line">     &#125;,</span><br><span class="line">     <span class="comment">// 富文本编辑器的配置项//</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>各项对应的功能都有，可以自己对照，当然代码高亮的也一起放进去了，quill本身是自带代码高亮显示的，但是由于在项目中没有显示，所以我这边使用了highlight.js插件来实现代码高亮，</p>
+<p>同理和前面引入quill.js的代码放在一块，不要分开放</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hljs <span class="keyword">from</span> <span class="string">&#x27;highlight.js&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;highlight.js/styles/monokai-sublime.css&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>&#x2F;&#x2F; 实现代码高亮的两个文件<br>然后在editorOption中加入代码</p>
+<p>&#x2F;&#x2F; 语法高亮</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">syntax</span>: &#123;</span><br><span class="line">         <span class="attr">highlight</span>: <span class="function"><span class="params">text</span> =&gt;</span> hljs.<span class="title function_">highlightAuto</span>(text).<span class="property">value</span></span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+
+<p>当然前面也已经放过了</p>
+<p>title: 富文本编辑器的使用<br>date: 2022-06-06 15:34:20<br>tags:quill.js</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-I-am-back" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
